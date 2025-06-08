@@ -43,7 +43,7 @@
     return;
   }
 
-  // ツイートページなら各articleにリンクを自動追加
+  // ツイートページなら1つ目のarticleにだけリンクを追加
   const tweetPageMatch = window.location.pathname.match(
     /^\/([^\/]+)\/status\/(\d+)/
   );
@@ -51,12 +51,22 @@
     const username = tweetPageMatch[1];
     const tweetId = tweetPageMatch[2];
 
-    // FIXME use querySelector
-    // MutationObserverで新しいarticleにも対応
-    const addLinkToArticles = () => {
+    const addLinkToFirstArticle = () => {
       const article = document.querySelector("article");
       if (!article) return;
       if (article.querySelector(".find-air-reply-link")) return;
+
+      // 「件の表示」spanを探す
+      const viewsSpan = Array.from(article.querySelectorAll("span")).find(
+        (span) => span.textContent && span.textContent.includes("件の表示")
+      );
+      if (!viewsSpan) return;
+
+      // 親のdivを取得
+      const parentDiv = viewsSpan.parentElement;
+      if (!parentDiv) return;
+
+      // リンクを作成して追加
       const link = document.createElement("a");
       link.textContent = "エアリプ元を探す";
       link.href = `https://x.com/${username}?findAirReply=${tweetId}`;
@@ -64,13 +74,13 @@
       link.style.marginLeft = "8px";
       link.style.color = "#1da1f2";
       link.style.cursor = "pointer";
-      article.appendChild(link);
+      parentDiv.appendChild(link);
     };
 
-    addLinkToArticles();
+    addLinkToFirstArticle();
 
     // 動的追加にも対応
-    const observer = new MutationObserver(addLinkToArticles);
+    const observer = new MutationObserver(addLinkToFirstArticle);
     observer.observe(document.body, { childList: true, subtree: true });
   }
 })();
