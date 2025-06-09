@@ -68,7 +68,7 @@
 
       // リンクを作成して追加
       const link = document.createElement("a");
-      link.textContent = "エアリプ元を探す";
+      link.textContent = "エアリプ先を探す";
       link.href = `https://x.com/${username}?findAirReply=${tweetId}`;
       link.className = "find-air-reply-link";
       link.style.marginLeft = "8px";
